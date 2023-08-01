@@ -3,7 +3,6 @@ package endpoint
 import (
 	"cart_mircoservice/iternal/service"
 	"cart_mircoservice/iternal/service/dto"
-
 	"context"
 	"github.com/go-kit/kit/endpoint"
 )
@@ -13,7 +12,34 @@ type Endpoints struct {
 	DeleteFromCart endpoint.Endpoint
 	GetFromCart    endpoint.Endpoint
 }
+type Middleware func(endpoint.Endpoint) endpoint.Endpoint
 
+//	func JwtMiddleware(logger log.Logger,secretToken string) Middleware {
+//		return func(next endpoint.Endpoint) endpoint.Endpoint {
+//			return func(ctx context.Context, request interface{}) (interface{}, error) {
+//				r := request.(http.Header)
+//				authToken := r.Get("Authorization")
+//
+//				tokenSplited := strings.Split(authToken, " ")
+//				if len(tokenSplited) <= 1 {
+//					return request,errors.New("CODE_INVALID_AUTH_TOKEN")
+//				}
+//				rawToken := tokenSplited[1]
+//				user :=
+//				token, err := jwt.ParseWithClaims(rawToken, user, func(token *jwt.Token) (interface{}, error) {
+//
+//					return []byte(secretToken), nil
+//				})
+//				if err != nil {
+//					return err
+//				}
+//				if !token.Valid {
+//					return errors.New("CODE_INVALID_AUTH_TOKEN")
+//				}
+//				return next(ctx, request)
+//			}
+//		}
+//	}
 func Make(s service.Service) Endpoints {
 	return Endpoints{
 		AddToCart:      MakeAddToCart(s),
@@ -25,6 +51,7 @@ func Make(s service.Service) Endpoints {
 func MakeAddToCart(s service.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(dto.AddToCartRequest)
+
 		err := s.AddToCart(ctx, req.UserId, req.Item)
 		if err != nil {
 			return dto.AddToCartResponse{Err: err}, err

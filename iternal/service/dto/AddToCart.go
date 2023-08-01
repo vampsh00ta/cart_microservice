@@ -6,7 +6,7 @@ import (
 )
 
 type AddToCartRequest struct {
-	UserId uuid.UUID `json:"userId"`
+	UserId uuid.UUID `json:"userId,omitempty"`
 	redis.Item
 }
 

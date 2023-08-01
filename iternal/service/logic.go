@@ -15,6 +15,7 @@ type service struct {
 
 func (s *service) AddToCart(ctx context.Context, userId uuid.UUID, item redis.Item) error {
 	logger := log.With(s.logger, "method", "Create")
+
 	err := s.db.AddItem(ctx, userId, item)
 	if err != nil {
 		level.Error(logger).Log("err", err)

@@ -14,7 +14,6 @@ import (
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 	"github.com/redis/go-redis/v9"
-	"golang.org/x/exp/slog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -35,7 +34,7 @@ func NewService(
 		//kithttp.ServerErrorEncoder(kithttp.ErrorEncoder()),
 	}
 	// HTTP Post - /orders
-	r.Methods("GET").Path("/items/{uuid}").Handler(kithttp.NewServer(
+	r.Methods("GET").Path("/items/").Handler(kithttp.NewServer(
 		svcEndpoints.GetFromCart,
 		httpcoding.DecodeGetFromCart,
 		httpcoding.EncodeResponse,
@@ -105,10 +104,4 @@ func main() {
 	}()
 	level.Error(logger).Log("exit", <-errs)
 
-}
-
-func setupLogger() *slog.Logger {
-	var log *slog.Logger
-
-	return log
 }

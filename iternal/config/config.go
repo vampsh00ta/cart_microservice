@@ -1,6 +1,9 @@
 package config
 
 import (
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
+
 	"log"
 	"os"
 	"time"
@@ -8,9 +11,16 @@ import (
 
 type Config struct {
 	Env        string `yaml:"env" env-default:"local"`
-	Storage    string `yaml:"storage_url" env-required:"true"`
+	Secret     string `yaml:"secret"  env-required:"true"`
 	HTTPServer `yaml:"http_server"`
 	Redis      `yaml:"redis"`
+}
+
+type JwtCustomClaim struct {
+	Id       uuid.UUID `json:"id"`
+	Username string    `json:"name"`
+	Admin    bool      `json:"admin"`
+	jwt.RegisteredClaims
 }
 
 type HTTPServer struct {
