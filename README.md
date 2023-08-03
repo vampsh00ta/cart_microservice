@@ -1,3 +1,6 @@
-1.Add jwt auth
-2.Change http to grpc
-3.Чонить еще 
+~~1.Add jwt auth~~
+~~2.Change http to grpc~~
+~~3.Чонить еще~~
+4.Добавить другие сервисы с http
+5.Добавить обработку ошибок
+6.Чонить еще 
