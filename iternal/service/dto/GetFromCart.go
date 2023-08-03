@@ -7,7 +7,7 @@ import (
 )
 
 type GetFromCartRequest struct {
-	UserId uuid.UUID `json:"userId"`
+	UserId uuid.UUID `json:"userId" validate:"required""`
 }
 
 type GetFromCartResponse struct {

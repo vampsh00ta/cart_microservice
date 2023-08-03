@@ -1,8 +1,10 @@
 package config
 
 import (
+	"errors"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
+	"net/http"
 
 	"log"
 	"os"
@@ -47,4 +49,24 @@ func MustLoad() *Config {
 	var cfg Config
 
 	return &cfg
+}
+
+var (
+	ErrInvalidToken = errors.New("Invalid token")
+	AlreadyInCart   = errors.New("Already in cart")
+	ValidationError = errors.New("Validation error")
+)
+
+func CodeFrom(err error) int {
+	switch err {
+
+	case ErrInvalidToken:
+		return http.StatusUnauthorized
+	case ValidationError:
+		return http.StatusBadRequest
+	case AlreadyInCart:
+		return http.StatusForbidden
+	default:
+		return http.StatusInternalServerError
+	}
 }

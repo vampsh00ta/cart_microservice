@@ -1,9 +1,9 @@
 package redis
 
 import (
+	"cart_mircoservice/iternal/config"
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/google/uuid"
 )
 
@@ -21,7 +21,7 @@ func (r *Redis) AddItem(ctx context.Context, userId uuid.UUID, item Item) error 
 	if _, ok := cart[item.Id]; !ok {
 		cart[item.Id] = item.MapItem
 	} else {
-		return errors.New("already in cart")
+		return config.AlreadyInCart
 	}
 	cartToSet, err := json.Marshal(&cart)
 	if err != nil {
@@ -43,6 +43,7 @@ func (r *Redis) GetCart(ctx context.Context, userId uuid.UUID) (Cart, error) {
 	}
 	var cart Cart
 	json.Unmarshal(cartByte, &cart)
+
 	return cart, nil
 
 }

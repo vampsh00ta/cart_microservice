@@ -14,9 +14,10 @@ type service struct {
 }
 
 func (s *service) AddToCart(ctx context.Context, userId uuid.UUID, item redis.Item) error {
-	logger := log.With(s.logger, "method", "Create")
+	logger := log.With(s.logger, "method", "AddToCart")
 
 	err := s.db.AddItem(ctx, userId, item)
+
 	if err != nil {
 		level.Error(logger).Log("err", err)
 		return err
@@ -26,7 +27,13 @@ func (s *service) AddToCart(ctx context.Context, userId uuid.UUID, item redis.It
 
 func (s *service) DeleteFromCart(ctx context.Context, userId uuid.UUID, itemId string) error {
 	logger := log.With(s.logger, "method", "DeleteFromCart")
-	err := s.db.DeleteItem(ctx, userId, itemId)
+	var err error
+	if itemId == "" {
+		err = s.db.DeleteCart(ctx, userId)
+	} else {
+		err = s.db.DeleteItem(ctx, userId, itemId)
+
+	}
 	if err != nil {
 		level.Error(logger).Log("err", err)
 		return err

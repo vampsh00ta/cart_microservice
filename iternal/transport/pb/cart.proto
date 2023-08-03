@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option go_package = "./";
+
+service Service {
+  rpc AddToCart(AddToCartRequest) returns (AddToCartResponse) {}
+  rpc GetCart(GetCartRequest) returns  (GetCartResponse) {}
+
+}
+message GetCartRequest {
+  string jwt = 1;
+
+}
+message GetCartResponse {
+  map<string,MapItem> cart = 1 ;
+
+}
+message AddToCartRequest {
+  string jwt = 1;
+  string id = 2;
+
+  string name = 3;
+  float price = 4;
+  string image = 5;
+
+
+}
+
+message AddToCartResponse{
+  string userId = 1;
+  string id = 2;
+  string name = 3;
+  float price = 4;
+  string image = 5;
+
+}
+message Item{
+  string id = 1;
+  MapItem item= 2;
+}
+message MapItem {
+  string name = 2;
+  float price = 3;
+  string image = 4;
+
+}

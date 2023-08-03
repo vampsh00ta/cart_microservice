@@ -5,7 +5,7 @@ import (
 )
 
 type DeleteFromCartRequest struct {
-	UserId uuid.UUID `json:"userId"`
+	UserId uuid.UUID `json:"userId,omitempty" validate:"string""`
 	ItemId string    `json:"itemId"`
 }
 

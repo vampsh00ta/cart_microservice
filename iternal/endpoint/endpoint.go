@@ -1,16 +1,20 @@
 package endpoint
 
 import (
+	"cart_mircoservice/iternal/config"
 	"cart_mircoservice/iternal/service"
 	"cart_mircoservice/iternal/service/dto"
 	"context"
+	"fmt"
 	"github.com/go-kit/kit/endpoint"
+	"github.com/go-playground/validator/v10"
 )
 
 type Endpoints struct {
 	AddToCart      endpoint.Endpoint
 	DeleteFromCart endpoint.Endpoint
 	GetFromCart    endpoint.Endpoint
+	DeleteCart     endpoint.Endpoint
 }
 type Middleware func(endpoint.Endpoint) endpoint.Endpoint
 
@@ -40,18 +44,22 @@ type Middleware func(endpoint.Endpoint) endpoint.Endpoint
 //			}
 //		}
 //	}
-func Make(s service.Service) Endpoints {
+func Make(s service.Service, validate *validator.Validate) Endpoints {
 	return Endpoints{
-		AddToCart:      MakeAddToCart(s),
-		DeleteFromCart: MakeDeletefromCart(s),
-		GetFromCart:    MakeGetFromCart(s),
+		AddToCart:      MakeAddToCart(s, validate),
+		DeleteFromCart: MakeDeletefromCart(s, validate),
+		GetFromCart:    MakeGetFromCart(s, validate),
 	}
 }
 
-func MakeAddToCart(s service.Service) endpoint.Endpoint {
+func MakeAddToCart(s service.Service, validate *validator.Validate) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(dto.AddToCartRequest)
+		fmt.Println(req)
+		if err := validate.Struct(&req); err != nil {
 
+			return dto.AddToCartResponse{Err: config.ValidationError}, config.ValidationError
+		}
 		err := s.AddToCart(ctx, req.UserId, req.Item)
 		if err != nil {
 			return dto.AddToCartResponse{Err: err}, err
@@ -61,7 +69,7 @@ func MakeAddToCart(s service.Service) endpoint.Endpoint {
 	}
 }
 
-func MakeDeletefromCart(s service.Service) endpoint.Endpoint {
+func MakeDeletefromCart(s service.Service, validate *validator.Validate) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(dto.DeleteFromCartRequest)
 		err := s.DeleteFromCart(ctx, req.UserId, req.ItemId)
@@ -73,7 +81,7 @@ func MakeDeletefromCart(s service.Service) endpoint.Endpoint {
 
 	}
 }
-func MakeGetFromCart(s service.Service) endpoint.Endpoint {
+func MakeGetFromCart(s service.Service, validate *validator.Validate) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(dto.GetFromCartRequest)
 		cart, err := s.GetFromCart(ctx, req.UserId)

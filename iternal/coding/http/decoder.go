@@ -1,6 +1,7 @@
 package http
 
 import (
+	"cart_mircoservice/iternal/coding"
 	"cart_mircoservice/iternal/config"
 	"cart_mircoservice/iternal/service/dto"
 	"context"
@@ -16,8 +17,11 @@ var (
 
 func DecodeGetFromCart(_ context.Context, r *http.Request) (request interface{}, err error) {
 	var user config.JwtCustomClaim
-
-	if err := DecodeJwtHttp(r, "secret", &user); err != nil {
+	rawToken, err := coding.GetJwtHTTP(r)
+	if err != nil {
+		return request, err
+	}
+	if err := coding.DecodeJwt("secret", &user, rawToken); err != nil {
 		return nil, err
 	}
 	fmt.Println(user)
@@ -28,9 +32,12 @@ func DecodeAddToCartRequest(_ context.Context, r *http.Request) (request interfa
 	var req dto.AddToCartRequest
 
 	var user config.JwtCustomClaim
-
-	if err := DecodeJwtHttp(r, "secret", &user); err != nil {
-		return req, err
+	rawToken, err := coding.GetJwtHTTP(r)
+	if err != nil {
+		return request, err
+	}
+	if err := coding.DecodeJwt("secret", &user, rawToken); err != nil {
+		return nil, err
 	}
 	if e := json.NewDecoder(r.Body).Decode(&req); e != nil {
 		return nil, e
@@ -42,9 +49,12 @@ func DecodeAddToCartRequest(_ context.Context, r *http.Request) (request interfa
 func DecodeDeleteFromCartRequest(_ context.Context, r *http.Request) (request interface{}, err error) {
 	var req dto.DeleteFromCartRequest
 	var user config.JwtCustomClaim
-
-	if err := DecodeJwtHttp(r, "secret", &user); err != nil {
-		return r, err
+	rawToken, err := coding.GetJwtHTTP(r)
+	if err != nil {
+		return request, err
+	}
+	if err := coding.DecodeJwt("secret", &user, rawToken); err != nil {
+		return nil, err
 	}
 	if e := json.NewDecoder(r.Body).Decode(&req); e != nil {
 		return nil, e
